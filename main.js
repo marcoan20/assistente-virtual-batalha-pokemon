@@ -5,14 +5,20 @@ const msgerChat = get(".msger-chat");
 // Icons made by Freepik from www.flaticon.com
 const BOT_IMG = "/464007.svg";
 const PERSON_IMG = "red.svg";
-const BOT_NAME = "BOT";
+const BOT_NAME = "Cynthia";
 const PERSON_NAME = "Red";
 
 window.onload = function () {
-  appendMessage(BOT_NAME, BOT_IMG, "left", "Como posso te ajudar treinador?");  
+  // wait 2 seconds before showing the bot typing
+  setTimeout(() => {
+    appendMessage(BOT_NAME, BOT_IMG, "left", "Bem vindo ao assistente de batalha Pokemon!");
+  }, 1000);
+  setTimeout(() => {
+    appendMessage(BOT_NAME, BOT_IMG, "left", "Digite o nome do pokemon que você está lutando contra");
+  }, 2000);
 };
 
-msgerForm.addEventListener("submit", event => {
+msgerForm.addEventListener("submit", async event => {
   event.preventDefault();
 
   const msgText = msgerInput.value;
@@ -20,9 +26,29 @@ msgerForm.addEventListener("submit", event => {
 
   appendMessage(PERSON_NAME, PERSON_IMG, "right", msgText);
   msgerInput.value = "";
+  if(msgText == "pare"){
+    appendMessage(BOT_NAME, BOT_IMG, "left", "Obrigado por usar o Assistente de batalha!" );
+    msgerInput.disabled = true;
+    msgerInput.placeholder = "Assistente desativado";
+    return;
+  }
+  axios.get(`http://127.0.0.1:8000/?txt=${msgText}`)
+  .then(function (response) {
+    const {mensagens, sprites} = response.data;
+    console.log(response.data)
+    if(!mensagens) 
+      appendMessage(BOT_NAME, BOT_IMG, "left", "Erro de conexão" );
+
+    mensagens.forEach((e, i) => {
+      setTimeout(() => {
+        appendMessage(BOT_NAME, BOT_IMG, "left", e);
+      }, 1000 * (i + 1));
+    });
+    
+  });
 });
 
-function appendMessage(name, img, side, text) {
+function appendMessage(name, img, side, text, imagem) {
   //   Simple solution for small apps
   const msgHTML = `
     <div class="msg ${side}-msg">
@@ -32,9 +58,9 @@ function appendMessage(name, img, side, text) {
         <div class="msg-info">
           <div class="msg-info-name">${name}</div>
           <div class="msg-info-time">${formatDate(new Date())}</div>
-        </div>
-
-        <div class="msg-text">${text}</div>
+        </div>` +
+        (imagem ? `<div class="msg-text"><img src="${imagem}" style="width: 100px; height: 100px;"></div>` : `<div class="msg-text">${text}</div>`) +
+        `
       </div>
     </div>
   `;
