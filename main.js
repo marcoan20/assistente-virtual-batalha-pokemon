@@ -34,16 +34,22 @@ msgerForm.addEventListener("submit", async event => {
   }
   axios.get(`http://127.0.0.1:8000/?txt=${msgText}`)
   .then(function (response) {
-    const {mensagens, sprites} = response.data;
+    const {mensagens, sprites,openDex} = response.data;
     console.log(response.data)
     if(!mensagens) 
       appendMessage(BOT_NAME, BOT_IMG, "left", "Erro de conexão" );
 
-    mensagens.forEach((e, i) => {
-      setTimeout(() => {
-        appendMessage(BOT_NAME, BOT_IMG, "left", e);
-      }, 1000 * (i + 1));
-    });
+      mensagens.forEach((e, i) => {
+        setTimeout(() => {
+          appendMessage(BOT_NAME, BOT_IMG, "left", e);
+        }, 1000 * (i + 1));
+      });
+      if(openDex){
+        setTimeout(() => {
+        window.open("https://www.pokemon.com/br/pokedex/");
+        }, 4000);
+        return;
+      }
     
   });
 });
