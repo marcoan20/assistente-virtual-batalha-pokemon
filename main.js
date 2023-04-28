@@ -34,7 +34,7 @@ msgerForm.addEventListener("submit", async event => {
   }
   axios.get(`http://127.0.0.1:8000/?txt=${msgText}`)
   .then(function (response) {
-    const {mensagens, sprites,openDex} = response.data;
+    const {mensagens, sprites, openDex} = response.data;
     console.log(response.data)
     if(!mensagens) 
       appendMessage(BOT_NAME, BOT_IMG, "left", "Erro de conexão" );
@@ -51,6 +51,8 @@ msgerForm.addEventListener("submit", async event => {
         return;
       }
     
+  }).catch(e => {
+    appendMessage(BOT_NAME, BOT_IMG, "left", "Erro de conexão" );
   });
 });
 
